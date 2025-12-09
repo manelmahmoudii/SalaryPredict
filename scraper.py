@@ -158,41 +158,4 @@ def scrape_indeed_selenium(job_query, location, num_pages=3):
     
     return jobs
 
-def main():
-    """Fonction principale"""
-    print("=" * 60)
-    print("🚀 SCRAPING INDEED AVEC SELENIUM")
-    print("=" * 60)
-    
-    # Requêtes de recherche
-    searches = [
-        {"job": "Développeur Python", "location": "Paris"},
-        {"job": "Data Scientist", "location": "Paris"},
-        {"job": "Ingénieur Logiciel", "location": "Lyon"},
-    ]
-    
-    all_jobs = []
-    
-    # Scraper chaque requête
-    for search in searches:
-        jobs = scrape_indeed_selenium(search['job'], search['location'], num_pages=2)
-        all_jobs.extend(jobs)
-        print(f"  ✅ {len(jobs)} offres collectées")
-    
-    # Sauvegarder en CSV
-    if all_jobs:
-        os.makedirs('data', exist_ok=True)
-        df = pd.DataFrame(all_jobs)
-        df.to_csv('data/jobs_data.csv', index=False, encoding='utf-8')
-        
-        print("\n" + "=" * 60)
-        print(f"✅ TERMINÉ!")
-        print(f"📊 Total: {len(all_jobs)} offres")
-        print(f"💰 Avec salaire: {df['salary'].notna().sum()}")
-        print(f"💾 Fichier: data/jobs_data.csv")
-        print("=" * 60)
-    else:
-        print("\n⚠️  Aucune donnée collectée")
 
-if __name__ == "__main__":
-    main()

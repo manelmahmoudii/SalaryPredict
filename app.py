@@ -155,6 +155,14 @@ def predict():
         scraped_count = len(scraped_jobs)
         print(f"✅ {scraped_count} offres trouvées sur Indeed")
         
+        # Si aucune offre trouvée, afficher un message d'avertissement
+        if scraped_count == 0:
+            return render_template('index.html',
+                                 trained=is_trained,
+                                 job_title=job_title,
+                                 location=location,
+                                 warning="Aucune offre trouvée sur Indeed pour cette recherche. Essayez avec un titre de poste différent ou une autre localisation.")
+        
         # Prédire le salaire
         salary = predict_salary(job_title, location, description)
         
