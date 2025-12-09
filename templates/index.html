@@ -1,121 +1,69 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html class="light" lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>SalaryPredict - Prédiction de Salaire</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#667fea",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111421",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            min-height: max(884px, 100dvh);
         }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-            width: 100%;
-            padding: 40px;
+        /* Animations personnalisées */
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        h1 {
-            color: #667eea;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
+        @keyframes pulse {
 
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
+            0%,
+            100% {
+                opacity: 1;
+            }
 
-        .status {
-            text-align: center;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .status.trained {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .result {
-            margin-top: 30px;
-            padding: 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            text-align: center;
-            color: white;
-            animation: slideIn 0.5s ease;
+            50% {
+                opacity: 0.5;
+            }
         }
 
         @keyframes slideIn {
@@ -130,119 +78,231 @@
             }
         }
 
-        .result h2 {
-            margin-bottom: 10px;
-            font-size: 1.5em;
+        .animate-spin {
+            animation: spin 1s linear infinite;
         }
 
-        .salary {
-            font-size: 3em;
-            font-weight: bold;
-            margin: 15px 0;
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
-        .job-info {
-            font-size: 1.1em;
-            opacity: 0.9;
+        .animate-slideIn {
+            animation: slideIn 0.5s ease-out;
         }
 
-        .error {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8d7da;
-            color: #721c24;
-            border-radius: 10px;
-            border-left: 4px solid #f5c6cb;
+        /* Loading button state */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
         }
 
-        .info {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            font-size: 0.9em;
-            color: #666;
+        .btn-loading .btn-text {
+            opacity: 0;
         }
 
-        .info h3 {
-            color: #667eea;
-            margin-bottom: 10px;
+        .btn-loading .btn-spinner {
+            display: flex;
         }
     </style>
 </head>
 
-<body>
-    <div class="container">
-        <h1>💰 SalaryPredict</h1>
-        <p class="subtitle">Prédiction de salaire avec scraping Indeed en temps réel</p>
-
-        {% if trained %}
-        <div class="status trained">
-            ✅ Modèle entraîné et prêt
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div
+        class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+        <!-- Top App Bar -->
+        <div class="flex items-center p-4 pb-2 justify-between">
+            <div class="flex size-12 shrink-0 items-center justify-start">
+                <button
+                    class="flex items-center justify-center rounded-full h-10 w-10 bg-transparent text-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+            </div>
+            <h2
+                class="text-slate-800 dark:text-slate-200 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">
+                Prédiction de Salaire</h2>
+            <div class="flex w-12 items-center justify-end">
+                <button
+                    class="flex items-center justify-center rounded-full h-10 w-10 bg-transparent text-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <span class="material-symbols-outlined">more_vert</span>
+                </button>
+            </div>
         </div>
-        {% endif %}
 
-        <form method="POST" action="/predict">
-            <div class="form-group">
-                <label for="job_title">Titre du poste *</label>
-                <input type="text" id="job_title" name="job_title" placeholder="Ex: Développeur Python" required>
-            </div>
+        <div class="flex-grow px-4 pt-4 pb-8">
+            <div class="flex flex-col gap-6">
+                <!-- Status Chip with animation -->
+                <div class="flex gap-3 animate-slideIn">
+                    {% if trained %}
+                    <div
+                        class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-emerald-100 dark:bg-emerald-500/20 pl-3 pr-4 transition-all hover:scale-105">
+                        <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400"
+                            style="font-size: 20px;">check_circle</span>
+                        <p class="text-emerald-800 dark:text-emerald-300 text-sm font-medium leading-normal">Modèle Prêt
+                        </p>
+                    </div>
+                    {% else %}
+                    <div
+                        class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-amber-100 dark:bg-amber-500/20 pl-3 pr-4">
+                        <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 animate-pulse"
+                            style="font-size: 20px;">warning</span>
+                        <p class="text-amber-800 dark:text-amber-300 text-sm font-medium leading-normal">Modèle Non
+                            Entraîné</p>
+                    </div>
+                    {% endif %}
+                </div>
 
-            <div class="form-group">
-                <label for="location">Localisation *</label>
-                <input type="text" id="location" name="location" placeholder="Ex: Paris" required>
-            </div>
+                <!-- Headline & Body Text -->
+                <div class="animate-slideIn" style="animation-delay: 0.1s;">
+                    <h1
+                        class="text-slate-900 dark:text-white tracking-tight text-[32px] font-bold leading-tight text-left">
+                        Découvrez Votre Potentiel Salarial</h1>
+                    <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-normal pt-1">Entrez les
+                        détails du poste ci-dessous pour obtenir une prédiction de salaire basée sur Indeed.</p>
+                </div>
 
-            <div class="form-group">
-                <label for="description">Description (optionnel)</label>
-                <textarea id="description" name="description"
-                    placeholder="Ex: Python, Django, Flask, API REST..."></textarea>
-            </div>
+                <!-- Form -->
+                <form method="POST" action="/predict" id="predictForm" class="flex flex-col gap-4 animate-slideIn"
+                    style="animation-delay: 0.2s;">
+                    <!-- Job Title -->
+                    <label class="flex flex-col">
+                        <p class="text-slate-800 dark:text-slate-200 text-base font-medium leading-normal pb-2">Titre du
+                            Poste</p>
+                        <div class="flex w-full flex-1 items-stretch rounded-lg">
+                            <input name="job_title"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 focus:border-primary h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 p-[15px] text-base font-normal leading-normal transition-all"
+                                placeholder="ex: Développeur Python Senior" required
+                                value="{{ job_title if job_title else '' }}" />
+                        </div>
+                    </label>
 
-            <button type="submit">🔮 Scraper Indeed et Prédire</button>
-        </form>
+                    <!-- Location -->
+                    <label class="flex flex-col">
+                        <p class="text-slate-800 dark:text-slate-200 text-base font-medium leading-normal pb-2">
+                            Localisation</p>
+                        <div class="relative flex w-full flex-1 items-stretch rounded-lg">
+                            <input name="location"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 focus:border-primary h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 p-[15px] pl-12 text-base font-normal leading-normal transition-all"
+                                placeholder="ex: Paris, France" required value="{{ location if location else '' }}" />
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+                                <span
+                                    class="material-symbols-outlined text-slate-400 dark:text-slate-500">location_on</span>
+                            </div>
+                        </div>
+                    </label>
 
-        {% if prediction %}
-        <div class="result">
-            <h2>Salaire prédit</h2>
-            <div class="salary">{{ "{:,.0f}".format(prediction) }} €</div>
-            <div class="job-info">
-                📍 {{ job_title }} à {{ location }}
-            </div>
+                    <!-- Description -->
+                    <label class="flex flex-col">
+                        <p class="text-slate-800 dark:text-slate-200 text-base font-medium leading-normal pb-2">
+                            Description du Poste (Optionnel)</p>
+                        <textarea name="description"
+                            class="form-textarea w-full resize-none rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 focus:border-primary placeholder:text-slate-400 dark:placeholder:text-slate-500 p-[15px] text-base font-normal leading-normal transition-all"
+                            placeholder="Collez la description du poste ici (compétences, technologies, etc.)..."
+                            rows="5"></textarea>
+                    </label>
 
-            {% if scraped_info %}
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
-                <p style="font-size: 0.9em; opacity: 0.9;">
-                    🔍 Basé sur {{ scraped_info.count }} offres réelles trouvées sur Indeed
-                </p>
-                {% if scraped_info.companies %}
-                <p style="font-size: 0.85em; opacity: 0.8; margin-top: 10px;">
-                    Entreprises : {{ scraped_info.companies|join(', ') }}
-                </p>
+                    <!-- Submit Button with Loading -->
+                    <button type="submit" id="submitBtn"
+                        class="relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 bg-primary text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 px-6 hover:bg-primary/90 active:scale-[0.98] transition-all shadow-lg hover:shadow-xl">
+                        <!-- Normal state -->
+                        <span class="btn-text flex items-center gap-2">
+                            <span class="material-symbols-outlined">search</span>
+                            <span>Scraper Indeed et Prédire</span>
+                        </span>
+                        <!-- Loading state -->
+                        <span class="btn-spinner hidden absolute inset-0 items-center justify-center gap-2">
+                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            <span>Scraping en cours...</span>
+                        </span>
+                    </button>
+                </form>
+
+                <!-- Result Display with animation -->
+                {% if prediction %}
+                <div class="mt-4 animate-slideIn">
+                    <div
+                        class="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+                        <p class="text-slate-500 dark:text-slate-400 text-base font-medium">Salaire Prédit</p>
+                        <p class="text-4xl font-bold text-primary animate-pulse" style="animation-duration: 1.5s;">{{
+                            "{:,.0f}".format(prediction) }} €</p>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">{{ job_title }} à {{ location }}</p>
+
+                        {% if scraped_info %}
+                        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 w-full">
+                            <div class="flex items-center justify-center gap-2 text-slate-600 dark:text-slate-400">
+                                <span class="material-symbols-outlined" style="font-size: 20px;">work</span>
+                                <p class="text-sm font-medium">Basé sur {{ scraped_info.count }} offres réelles trouvées
+                                    sur Indeed</p>
+                            </div>
+                            {% if scraped_info.companies %}
+                            <p class="text-slate-500 dark:text-slate-500 text-xs mt-2">
+                                Entreprises : {{ scraped_info.companies|join(', ') }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
                 {% endif %}
+
+                <!-- Error Display -->
+                {% if error %}
+                <div class="mt-4 animate-slideIn">
+                    <div
+                        class="flex flex-col items-center justify-center gap-4 rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/20 p-6 text-center">
+                        <span class="material-symbols-outlined text-red-500 dark:text-red-400">error</span>
+                        <p class="text-red-700 dark:text-red-300 font-medium">Erreur de prédiction</p>
+                        <p class="text-red-600 dark:text-red-400 text-sm">{{ error }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Info Card -->
+                <div class="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 animate-slideIn hover:shadow-lg transition-shadow"
+                    style="animation-delay: 0.3s;">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-primary">info</span>
+                        <div class="flex-1">
+                            <h3 class="text-slate-800 dark:text-slate-200 font-semibold mb-2">Comment ça marche ?</h3>
+                            <ul class="text-slate-600 dark:text-slate-400 text-sm space-y-2">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-bold">1.</span>
+                                    <span>Entrez un métier et une localisation</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-bold">2.</span>
+                                    <span>Le système scrappe Indeed en temps réel avec Selenium</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-bold">3.</span>
+                                    <span>Le modèle ML prédit le salaire basé sur les données</span>
+                                </li>
+                            </ul>
+                            <p class="text-slate-500 dark:text-slate-500 text-xs mt-3 flex items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">schedule</span>
+                                Le scraping prend environ 10-15 secondes
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            {% endif %}
-        </div>
-        {% endif %}
-
-        {% if error %}
-        <div class="error">
-            ❌ {{ error }}
-        </div>
-        {% endif %}
-
-        <div class="info">
-            <h3>ℹ️ Comment ça marche ?</h3>
-            <p style="margin: 10px 0;">
-                1. Entrez un métier et une localisation<br>
-                2. Le système <strong>scrappe Indeed en temps réel</strong> pour ce métier<br>
-                3. Le modèle ML prédit le salaire basé sur les données scrapées
-            </p>
-            <p style="margin-top: 15px; font-size: 0.85em; color: #999;">
-                ⏱️ Le scraping prend ~10-15 secondes
-            </p>
         </div>
     </div>
+
+    <script>
+        // Loading animation on form submit
+        document.getElementById('predictForm').addEventListener('submit', function (e) {
+            const btn = document.getElementById('submitBtn');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+        });
+    </script>
 </body>
 
 </html>
