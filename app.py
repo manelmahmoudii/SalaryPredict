@@ -22,23 +22,10 @@ location_encoder = None
 is_trained = False
 
 def load_data():
-    """Charge les données scrapées"""
-    data_file = 'data/jobs_data.csv'
-    
-    if os.path.exists(data_file):
-        df = pd.read_csv(data_file, encoding='utf-8')
-        # Garder seulement les offres avec salaire
-        df_with_salary = df[df['salary'].notna()]
-        
-        if len(df_with_salary) >= 5:
-            print(f"✅ Données scrapées chargées: {len(df_with_salary)} offres avec salaire")
-            return df_with_salary
-        else:
-            print(f"⚠️  Données scrapées trouvées mais peu de salaires ({df['salary'].notna().sum()}/{len(df)})")
-            print("   Utilisation de données d'exemple pour l'entraînement.")
-    
-    # Données d'exemple si pas assez de données scrapées
-    print("📝 Utilisation de données d'exemple.")
+    """Charge les données d'entraînement"""
+    # Utilise des données d'exemple pour entraîner le modèle
+    # Le scraping se fait en temps réel lors des prédictions
+    print("📝 Utilisation de données d'exemple pour l'entraînement.")
     return pd.DataFrame([
         {'title': 'Développeur Python', 'location': 'Paris', 'description': 'Python Django Flask', 'salary': 45000},
         {'title': 'Développeur Python Senior', 'location': 'Paris', 'description': 'Python Django Docker', 'salary': 55000},
