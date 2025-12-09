@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalaryPredict - Prédiction de Salaire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .status.trained {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.not-trained {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .salary {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .job-info {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .error {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8d7da;
+            color: #721c24;
+            border-radius: 10px;
+            border-left: 4px solid #f5c6cb;
+        }
+
+        .info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info ul {
+            margin-left: 20px;
+        }
+
+        .info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>💰 SalaryPredict</h1>
+        <p class="subtitle">Prédiction de salaire basée sur Indeed</p>
+
+        {% if trained %}
+        <div class="status trained">
+            ✅ Modèle entraîné et prêt
+        </div>
+        {% else %}
+        <div class="status not-trained">
+            ⚠️ Modèle non entraîné - Exécutez d'abord scraper_simple.py
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/predict">
+            <div class="form-group">
+                <label for="job_title">Titre du poste *</label>
+                <input type="text" id="job_title" name="job_title" placeholder="Ex: Développeur Python" required>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Localisation *</label>
+                <input type="text" id="location" name="location" placeholder="Ex: Paris" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description (optionnel)</label>
+                <textarea id="description" name="description"
+                    placeholder="Ex: Python, Django, Flask, API REST..."></textarea>
+            </div>
+
+            <button type="submit">🔮 Prédire le salaire</button>
+        </form>
+
+        {% if prediction %}
+        <div class="result">
+            <h2>Salaire prédit</h2>
+            <div class="salary">{{ "{:,.0f}".format(prediction) }} €</div>
+            <div class="job-info">
+                📍 {{ job_title }} à {{ location }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="error">
+            ❌ {{ error }}
+        </div>
+        {% endif %}
+
+        <div class="info">
+            <h3>ℹ️ Comment utiliser ?</h3>
+            <ul>
+                <li><strong>Étape 1:</strong> Exécutez <code>scraper_simple.py</code> pour collecter les données</li>
+                <li><strong>Étape 2:</strong> Lancez <code>app_simple.py</code> (le modèle s'entraîne automatiquement)
+                </li>
+                <li><strong>Étape 3:</strong> Entrez un titre de poste et une localisation pour obtenir une prédiction
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
