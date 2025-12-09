@@ -142,7 +142,7 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    """Endpoint de prédiction"""
+    """Endpoint de prédiction avec scraping en temps réel"""
     try:
         # Récupérer les données
         job_title = request.form.get('job_title', '')
@@ -159,14 +159,33 @@ def predict():
                                  trained=is_trained,
                                  error="Modèle non entraîné")
         
-        # Prédire
+        # NOUVEAU : Scraper Indeed en temps réel pour ce métier
+        print(f"\n🔍 Scraping Indeed pour '{job_title}' à '{location}'...")
+        
+        from scraper import scrape_indeed_selenium
+        scraped_jobs = scrape_indeed_selenium(job_title, location, num_pages=1)
+        
+        scraped_count = len(scraped_jobs)
+        print(f"✅ {scraped_count} offres trouvées sur Indeed")
+        
+        # Prédire le salaire
         salary = predict_salary(job_title, location, description)
+        
+        # Préparer les informations sur les offres scrapées
+        scraped_info = None
+        if scraped_count > 0:
+            companies = [job['company'] for job in scraped_jobs[:5]]
+            scraped_info = {
+                'count': scraped_count,
+                'companies': companies
+            }
         
         return render_template('index.html',
                              trained=is_trained,
                              prediction=salary,
                              job_title=job_title,
-                             location=location)
+                             location=location,
+                             scraped_info=scraped_info)
     
     except Exception as e:
         return render_template('index.html',
